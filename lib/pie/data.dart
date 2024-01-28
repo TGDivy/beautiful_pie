@@ -1,5 +1,7 @@
 import 'dart:ui';
 
+import 'package:flutter/material.dart';
+
 class PieChartData {
   final List<PieSection> sections;
   final bool showLabels;
@@ -37,14 +39,18 @@ class PieSection {
   final Color color;
   final String label;
   final Offset offset;
-  final bool selected;
+  bool selected;
+  AnimationController? controller;
+  Animation<double>? animation;
 
-  const PieSection({
+  PieSection({
     required this.value,
     required this.color,
     required this.label,
     required this.offset,
     this.selected = false,
+    this.controller,
+    this.animation,
   });
 
   PieSection copyWith({
@@ -53,6 +59,8 @@ class PieSection {
     String? label,
     Offset? offset,
     bool? selected,
+    AnimationController? controller,
+    Animation<double>? animation,
   }) {
     return PieSection(
       value: value ?? this.value,
@@ -60,6 +68,8 @@ class PieSection {
       label: label ?? this.label,
       offset: offset ?? this.offset,
       selected: selected ?? this.selected,
+      controller: controller ?? this.controller,
+      animation: animation ?? this.animation,
     );
   }
 }

@@ -34,26 +34,26 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  final data = const PieChartData(
+  final data = PieChartData(
     sections: [
       PieSection(
         value: 0.25,
         color: Colors.blue,
         label: 'Red',
-        offset: Offset(0, 0),
+        offset: const Offset(0, 0),
       ),
       PieSection(
         value: 0.25,
         color: Colors.green,
         label: 'Green',
-        offset: Offset(0, 0),
+        offset: const Offset(0, 0),
         selected: true,
       ),
       PieSection(
         value: 0.5,
         color: Colors.red,
         label: 'Blue',
-        offset: Offset(0, 0),
+        offset: const Offset(0, 0),
       ),
     ],
   );
