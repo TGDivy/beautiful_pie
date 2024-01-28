@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:beautiful_pie/pie/data.dart';
 import 'package:beautiful_pie/pie/main.dart';
 import 'package:flutter/material.dart';
 
@@ -33,6 +34,30 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  final data = const PieChartData(
+    sections: [
+      PieSection(
+        value: 0.25,
+        color: Colors.blue,
+        label: 'Red',
+        offset: Offset(0, 0),
+      ),
+      PieSection(
+        value: 0.25,
+        color: Colors.green,
+        label: 'Green',
+        offset: Offset(0, 0),
+        selected: true,
+      ),
+      PieSection(
+        value: 0.5,
+        color: Colors.red,
+        label: 'Blue',
+        offset: Offset(0, 0),
+      ),
+    ],
+  );
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -46,7 +71,7 @@ class _MyHomePageState extends State<MyHomePage> {
           dimension: min(MediaQuery.of(context).size.width,
                   MediaQuery.of(context).size.height) *
               0.8,
-          child: const AnimatedPieChart(),
+          child: AnimatedPieChart(data: data),
         ),
       ),
       bottomNavigationBar: BottomNavigationBar(
