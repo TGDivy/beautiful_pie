@@ -31,3 +31,14 @@ It is important to set the scope of this project as it will allow me to both sta
   - [ ] Tap and drag from the center will show a line that follows the finger, and snap to the end of pie chart, when released it will create a new section.
     - [ ] It will show a ghost of the new section, and the size of the new section will be a standard size.
   - [ ] Tap and drag from the divider of a section will increase the size of the section it is dragging from, and decrease the size of the section it is dragging to.
+
+### Data Structure
+
+The data structure will be a simple list of `PieSection` objects. Each `PieSection` will have the following properties:
+
+- `percentage` - The percentage of the pie chart that the section will take up.
+- `color` - The color of the section.
+- `border` - The border of the section.
+- `label` - The label of the section.
+- `offset` - The offset of the section from the center of the pie chart.
+- `widget` - The widget that will be rendered in the section.

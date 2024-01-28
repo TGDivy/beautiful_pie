@@ -16,7 +16,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blueGrey),
         useMaterial3: true,
       ),
       home: const MyHomePage(title: 'Beautiful Pie'),
@@ -46,7 +46,7 @@ class _MyHomePageState extends State<MyHomePage> {
           dimension: min(MediaQuery.of(context).size.width,
                   MediaQuery.of(context).size.height) *
               0.8,
-          child: const PieChart(),
+          child: const AnimatedPieChart(),
         ),
       ),
       bottomNavigationBar: BottomNavigationBar(
