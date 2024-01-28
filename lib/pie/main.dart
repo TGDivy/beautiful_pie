@@ -1,15 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 
-// The data structure will be a simple list of `PieSection` objects. Each `PieSection` will have the following properties:
-
-// - `percentage` - The percentage of the pie chart that the section will take up.
-// - `color` - The color of the section.
-// - `border` - The border of the section.
-// - `label` - The label of the section.
-// - `offset` - The offset of the section from the center of the pie chart.
-// - `widget` - The widget that will be rendered in the section.
-
 class PieChartData {
   final List<PieSection> sections;
 
@@ -194,7 +185,11 @@ class PieChartPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) {
-    return true;
+    if (animation.status != AnimationStatus.completed) {
+      return true;
+    } else {
+      return false;
+    }
   }
 }
 
