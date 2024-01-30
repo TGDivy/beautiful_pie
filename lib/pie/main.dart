@@ -30,6 +30,9 @@ class AnimatedPieChartState extends State<AnimatedPieChart>
       parent: _controller,
       curve: Curves.easeInOut,
     );
+    _animation.addListener(() {
+      setState(() {});
+    });
     _controller.forward();
 
     _data = widget.data;
@@ -42,6 +45,9 @@ class AnimatedPieChartState extends State<AnimatedPieChart>
         parent: section.controller!,
         curve: Curves.easeInOut,
       );
+      section.animation!.addListener(() {
+        setState(() {});
+      });
 
       if (section.selected) {
         section.controller!.forward();
@@ -57,34 +63,33 @@ class AnimatedPieChartState extends State<AnimatedPieChart>
     final newData = _data.copyWith(
         sections: _data.sections
             .map((e) => e.copyWith(
-                color: Color.lerp(e.color, colorScheme.primaryContainer, 0.33)))
+                color: Color.lerp(e.color, colorScheme.primary, 0.3)))
             .toList());
-    final totalPercentage =
-        newData.sections.fold(0.0, (sum, e) => sum + e.value);
+    final totalPercentage = _data.sections.fold(0.0, (sum, e) => sum + e.value);
 
     return GestureDetector(
       onTapUp: (TapUpDetails details) {
+        // using global key and render box to get the position of tap relative to the center of the pie chart
         final RenderBox box = context.findRenderObject() as RenderBox;
         final Offset localOffset = box.globalToLocal(details.globalPosition);
-        final double dx = localOffset.dx - box.size.width / 2;
-        final double dy = localOffset.dy - box.size.height / 2;
-        final double angle = atan2(dy, dx);
-        double startAngle = -pi / 2;
-
+        final Offset center = Offset(box.size.width / 2, box.size.height / 2);
+        final Offset offset = localOffset - center;
+        const double diff = 0;
+        double angle = atan2(offset.dy, offset.dx) + pi / 2;
+        double startAngle = diff;
+        if (angle < 0) {
+          angle += 2 * pi;
+        }
         final newSections = <PieSection>[];
         for (var i = 0; i < _data.sections.length; i++) {
           final section = _data.sections[i];
           final sweepAngle = 2 * pi * section.value / totalPercentage;
           if (section.selected) {
             newSections.add(section.copyWith(selected: false));
-            section.controller!.reverse();
           } else if (startAngle <= angle && angle <= startAngle + sweepAngle) {
             newSections.add(section.copyWith(selected: true));
-            section.controller!.reset();
-            section.controller!.forward();
           } else {
             newSections.add(section.copyWith(selected: false));
-            section.controller!.reverse();
           }
           startAngle += sweepAngle;
         }
@@ -92,6 +97,13 @@ class AnimatedPieChartState extends State<AnimatedPieChart>
         setState(() {
           count++;
           _data = _data.copyWith(sections: newSections);
+          for (var section in _data.sections) {
+            if (section.selected) {
+              section.controller!.forward();
+            } else {
+              section.controller!.reverse();
+            }
+          }
         });
       },
       child: CustomPaint(

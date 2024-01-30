@@ -82,16 +82,16 @@ class PieChartPainter extends CustomPainter {
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) {
     return true;
-    if (animation.status != AnimationStatus.completed) {
-      return true;
-    }
-    if (oldDelegate is PieChartPainter) {
-      for (var i = 0; i < data.sections.length; i++) {
-        if (data.sections[i].controller!.isAnimating) {
-          return true;
-        }
-      }
-    }
-    return false;
+    // if (animation.status != AnimationStatus.completed) {
+    //   return true;
+    // }
+    // if (oldDelegate is PieChartPainter) {
+    //   for (var i = 0; i < data.sections.length; i++) {
+    //     if (data.sections[i].controller!.isAnimating) {
+    //       return true;
+    //     }
+    //   }
+    // }
+    // return false;
   }
 }

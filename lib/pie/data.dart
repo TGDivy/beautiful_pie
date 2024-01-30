@@ -12,7 +12,7 @@ class PieChartData {
     required this.sections,
     this.showLabels = true,
     this.gap = 5,
-    this.innerRadius = 25,
+    this.innerRadius = 30,
   });
 
   listEquals(List<PieSection> a, List<PieSection> b) {
