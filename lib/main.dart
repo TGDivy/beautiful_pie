@@ -35,6 +35,8 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   final data = PieChartData(
+    gap: 5,
+    innerRadius: 30,
     sections: [
       PieSection(
         value: 0.25,
@@ -60,6 +62,14 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    ColorScheme colorScheme = Theme.of(context).colorScheme;
+
+    // lerp the colors of data with colorScheme
+    final newData = data.copyWith(
+        sections: data.sections
+            .map((e) => e.copyWith(
+                color: Color.lerp(e.color, colorScheme.primary, 0.3)))
+            .toList());
     return Scaffold(
       appBar: AppBar(
           backgroundColor: Theme.of(context).colorScheme.surfaceVariant,
@@ -71,7 +81,7 @@ class _MyHomePageState extends State<MyHomePage> {
           dimension: min(MediaQuery.of(context).size.width,
                   MediaQuery.of(context).size.height) *
               0.8,
-          child: AnimatedPieChart(data: data),
+          child: EventsChart(data: newData),
         ),
       ),
       bottomNavigationBar: BottomNavigationBar(
