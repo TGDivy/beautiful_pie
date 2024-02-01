@@ -99,7 +99,7 @@ int maxIntersectingEventsAtSingleTime(List<Event> events) {
   return maxIntersectingEvents;
 }
 
-void PaintCurvedLabel(Canvas canvas, Offset center, String label, double angle,
+void paintCurvedLabel(Canvas canvas, Offset center, String label, double angle,
     double radius, double offset, TextStyle style) {
   angle += startAngle;
   // given the angle, find the x and y coordinates of the center of the label
@@ -131,13 +131,6 @@ void PaintCurvedLabel(Canvas canvas, Offset center, String label, double angle,
 
   for (var i = 0; i < label.length; i++) {
     final char = label[i];
-
-    //using angle, find the x and y coordinates of the center of the label
-    final charStart = Offset(
-      labelStart.dx + i * textPainter.width / label.length + i * 5,
-      labelStart.dy,
-    );
-
     final charPainter = TextPainter(
       text: TextSpan(
         text: char,
@@ -145,8 +138,13 @@ void PaintCurvedLabel(Canvas canvas, Offset center, String label, double angle,
       ),
       textDirection: TextDirection.ltr,
     );
-
     charPainter.layout();
+    //using angle, find the x and y coordinates of the center of the label
+    final charStart = Offset(
+      labelStart.dx + i * charPainter.width,
+      labelStart.dy,
+    );
+
     charPainter.paint(canvas, charStart);
   }
 }
@@ -184,7 +182,7 @@ void paintEvents(Canvas canvas, List<Event> events, Offset center,
       fontSize: 12,
       fontWeight: FontWeight.bold,
     );
-    PaintCurvedLabel(canvas, center, event.title, angle + sweepAngle / 2,
+    paintCurvedLabel(canvas, center, event.title, angle + sweepAngle / 2,
         labelRadius, 0, labelStyle);
 
     // add the event to the intersecting events
