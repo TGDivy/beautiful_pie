@@ -33,8 +33,56 @@ class MyHomePage extends StatefulWidget {
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
+final now = DateTime.now();
+
 class _MyHomePageState extends State<MyHomePage> {
-  final List<Event> events = [];
+  final List<Event> events = [
+    // Event(
+    //     title: 'Event 1',
+    //     time: DateTime.now(),
+    //     duration: const Duration(hours: 6),
+    //     color: Colors.red),
+    // Event(
+    //     title: 'Event 2',
+    //     time: DateTime.now().add(const Duration(hours: 1)),
+    //     duration: const Duration(hours: 1),
+    //     color: Colors.green),
+    // Event(
+    //     title: 'Event 3',
+    //     time: DateTime.now().add(const Duration(hours: 3)),
+    //     duration: const Duration(hours: 1),
+    //     color: Colors.blue),
+    // Event(
+    //     title: 'Event 3',
+    //     time: DateTime.now().add(const Duration(hours: 5)),
+    //     duration: const Duration(hours: 3),
+    //     color: Colors.yellow),
+
+    // actual events that actually make sense for my schedule
+    Event(
+        title: 'Sleep',
+        time: DateTime(now.year, now.month, now.day, 23, 0),
+        duration: const Duration(hours: 8),
+        color: Colors.blueGrey),
+    Event(
+        title: 'Get ready',
+        // time: TimeOfDay(hour: 7, minute: 30),
+        time: DateTime(now.year, now.month, now.day, 7, 30),
+        duration: const Duration(hours: 1),
+        color: Colors.blueGrey),
+    Event(
+        title: 'Breakfast',
+        // time: TimeOfDay(hour: 8, minute: 30),
+        time: DateTime(now.year, now.month, now.day, 8, 30),
+        duration: const Duration(hours: 1),
+        color: Colors.green.shade200),
+    Event(
+        title: 'School',
+        // time: TimeOfDay(hour: 7, minute: 30),
+        time: DateTime(now.year, now.month, now.day, 7, 30),
+        duration: const Duration(hours: 8),
+        color: Colors.blue.shade300),
+  ];
 
   @override
   Widget build(BuildContext context) {

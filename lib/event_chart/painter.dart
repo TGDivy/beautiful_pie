@@ -82,49 +82,50 @@ void paintClock(Canvas canvas, Offset center, double r) {
   }
 }
 
-// construct an event tree
-class EventTree {
-  final Event event;
-  final List<EventTree> children = [];
-
-  EventTree(this.event);
-
-  void add(EventTree child) {
-    children.add(child);
-  }
-}
-
-// construct a tree of events
-EventTree buildEventTree(List<Event> events) {
-  // sort the events by start time
+int maxIntersectingEventsAtSingleTime(List<Event> events) {
   events.sort((a, b) => a.time.compareTo(b.time));
 
-  // create a tree of events
-  var root = EventTree(events[0]);
-  var current = root;
-  for (var i = 1; i < events.length; i++) {
-    var event = events[i];
-    if (event.time.isAfter(current.event.time.add(event.duration))) {
-      // create a new root
-      current = root;
-    }
-    var child = EventTree(event);
-    current.add(child);
-    current = child;
+  List<Event> intersectingEvents = [];
+
+  var maxIntersectingEvents = 0;
+  for (var event in events) {
+    intersectingEvents
+        .removeWhere((e) => e.time.add(e.duration).compareTo(event.time) <= 0);
+    intersectingEvents.add(event);
+    maxIntersectingEvents =
+        max(maxIntersectingEvents, intersectingEvents.length);
   }
-  return root;
+
+  return maxIntersectingEvents;
 }
 
-// calculate the max number of rings
-int maxIntersectingEvents(EventTree root) {
-  var max = 0;
-  for (var child in root.children) {
-    var count = maxIntersectingEvents(child);
-    if (count > max) {
-      max = count;
+void paintEvents(Canvas canvas, List<Event> events, Offset center,
+    List<double> rings, double ringWidth) {
+  // paint the event on the next ring if it intersects with another event on the same ring
+  // otherwise paint it on the current ring
+
+  // sort the events by time
+  events.sort((a, b) => a.time.compareTo(b.time));
+  List<Event> intersectingEvents = [];
+  for (var event in events) {
+    intersectingEvents
+        .removeWhere((e) => e.time.add(e.duration).compareTo(event.time) <= 0);
+    var ringIndex = 0;
+    for (var i = 0; i < intersectingEvents.length; i++) {
+      if (intersectingEvents[i].time.compareTo(event.time) <= 0) {
+        ringIndex = i + 1;
+      }
     }
+    intersectingEvents.add(event);
+
+    // get the angle and sweep angle
+    final angle = event.time.hour * 2 * pi / 24;
+    final sweepAngle = event.duration.inHours * 2 * pi / 24;
+
+    // paint the event
+    paintRingSection(canvas, center, angle, sweepAngle, event.color,
+        rings[ringIndex], ringWidth);
   }
-  return max + 1;
 }
 
 class EventsChartPainter extends CustomPainter {
@@ -141,7 +142,9 @@ class EventsChartPainter extends CustomPainter {
     final clockRadius = 2 * maxRadius / 3;
     paintClock(canvas, center, clockRadius);
 
-    final maxRings = 3; //maxIntersectingEvents(buildEventTree(events));
+    // final eventTree = buildEventTree(events);
+    final maxRings = maxIntersectingEventsAtSingleTime(events);
+    // print(maxRings);
     const ringGap = 2;
     final ringWidth = (maxRadius - clockRadius - ringGap * maxRings) / maxRings;
 
@@ -151,16 +154,20 @@ class EventsChartPainter extends CustomPainter {
       rings.add(r);
     }
 
-    paintRingSection(
-        canvas, center, 0, pi / 2, Colors.red, rings[0], ringWidth);
-    paintRingSection(
-        canvas, center, pi / 8, pi / 3, Colors.red, rings[1], ringWidth);
-    paintRingSection(
-        canvas, center, pi / 4, pi, Colors.red, rings[2], ringWidth);
+    // sample paint
+    // paintRingSection(
+    //     canvas, center, 0, pi / 2, Colors.red, rings[0], ringWidth);
+    // paintRingSection(
+    //     canvas, center, pi / 8, pi / 3, Colors.red, rings[1], ringWidth);
+    // paintRingSection(
+    //     canvas, center, pi / 4, pi, Colors.red, rings[2], ringWidth);
+
+    // paint the events
+    paintEvents(canvas, events, center, rings, ringWidth);
   }
 
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) {
-    return true;
+    return false;
   }
 }
