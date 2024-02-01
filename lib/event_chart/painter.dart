@@ -101,11 +101,11 @@ int maxIntersectingEventsAtSingleTime(List<Event> events) {
 
 void paintCurvedLabel(Canvas canvas, Offset center, String label, double angle,
     double radius, double offset, TextStyle style) {
+  final isTop = angle > pi;
   angle += startAngle;
   // given the angle, find the x and y coordinates of the center of the label
-  // then iterate through the characters of the label and draw them one by one
-  // if top half, draw from the center to the right
-  // if bottom half, draw from the center to the left
+
+  // isRight is true if the label is on the right half of the circle given the center, and the angle
 
   final textPainter = TextPainter(
     text: TextSpan(
@@ -115,19 +115,14 @@ void paintCurvedLabel(Canvas canvas, Offset center, String label, double angle,
     textDirection: TextDirection.ltr,
   );
   textPainter.layout();
-  final labelRadius = radius + offset;
-  final labelCenter = Offset(
-    center.dx + labelRadius * cos(angle),
-    center.dy + labelRadius * sin(angle),
-  );
+  // depending on isRight and isTop, the x and y coordinates of first character of the label will be different
 
-  final labelWidth = textPainter.width;
-  final labelHeight = textPainter.height;
-
-  final labelStart = Offset(
-    labelCenter.dx - labelWidth / 2,
-    labelCenter.dy - labelHeight / 2,
-  );
+  var x1 = center.dx + radius * cos(angle);
+  var y1 = center.dy + radius * sin(angle);
+  var charAngle = angle;
+  // then iterate through the characters of the label and draw them one by one
+  // if position is in top half with respect to center then draw from the center to the right
+  // if position is in bottom half with respect to center then draw from the center to the left
 
   for (var i = 0; i < label.length; i++) {
     final char = label[i];
@@ -139,13 +134,38 @@ void paintCurvedLabel(Canvas canvas, Offset center, String label, double angle,
       textDirection: TextDirection.ltr,
     );
     charPainter.layout();
-    //using angle, find the x and y coordinates of the center of the label
-    final charStart = Offset(
-      labelStart.dx + i * charPainter.width,
-      labelStart.dy,
-    );
+    final charWidth = charPainter.width;
+    final charHeight = charPainter.height;
 
-    charPainter.paint(canvas, charStart);
+    charPainter.paint(canvas, Offset(x1, y1));
+
+    // calulate the angle of the next character
+    final nextChar = label[(i + 1) % label.length];
+    final nextCharPainter = TextPainter(
+      text: TextSpan(
+        text: nextChar,
+        style: style,
+      ),
+      textDirection: TextDirection.ltr,
+    );
+    nextCharPainter.layout();
+    final nextCharWidth = nextCharPainter.width;
+    final nextCharHeight = nextCharPainter.height;
+
+    charAngle += (nextCharWidth + charWidth) / 2 / radius * (!isTop ? -1 : 1) +
+        (nextCharHeight - charHeight) / 2 / radius * (!isTop ? -1 : 1);
+
+    // calculate the x and y coordinates of the next character
+    final x2 = center.dx + radius * cos(charAngle);
+    final y2 = center.dy + radius * sin(charAngle);
+
+    // draw a line from the first character to the next character
+    canvas.drawLine(
+        Offset(x1, y1), Offset(x2, y2), Paint()..color = Colors.red);
+
+    // update the x and y coordinates of the first character
+    x1 = x2;
+    y1 = y2;
   }
 }
 
@@ -182,8 +202,8 @@ void paintEvents(Canvas canvas, List<Event> events, Offset center,
       fontSize: 12,
       fontWeight: FontWeight.bold,
     );
-    paintCurvedLabel(canvas, center, event.title, angle + sweepAngle / 2,
-        labelRadius, 0, labelStyle);
+    paintCurvedLabel(canvas, center, event.title, angle + pi / 64, labelRadius,
+        0, labelStyle);
 
     // add the event to the intersecting events
     intersectingEvents[ringIndex] = [event];

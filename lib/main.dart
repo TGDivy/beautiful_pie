@@ -60,7 +60,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
     // actual events that actually make sense for my schedule
     Event(
-        title: 'Sleep',
+        title: 'Sleep for a long time',
         time: DateTime(now.year, now.month, now.day, 23, 0),
         duration: const Duration(hours: 8),
         color: Colors.blueGrey),
