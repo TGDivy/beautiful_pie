@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:beautiful_pie/event_chart/data.dart';
 import 'package:flutter/material.dart';
 
 const startAngle = -pi / 2;
@@ -81,7 +82,57 @@ void paintClock(Canvas canvas, Offset center, double r) {
   }
 }
 
+// construct an event tree
+class EventTree {
+  final Event event;
+  final List<EventTree> children = [];
+
+  EventTree(this.event);
+
+  void add(EventTree child) {
+    children.add(child);
+  }
+}
+
+// construct a tree of events
+EventTree buildEventTree(List<Event> events) {
+  // sort the events by start time
+  events.sort((a, b) => a.time.compareTo(b.time));
+
+  // create a tree of events
+  var root = EventTree(events[0]);
+  var current = root;
+  for (var i = 1; i < events.length; i++) {
+    var event = events[i];
+    if (event.time.isAfter(current.event.time.add(event.duration))) {
+      // create a new root
+      current = root;
+    }
+    var child = EventTree(event);
+    current.add(child);
+    current = child;
+  }
+  return root;
+}
+
+// calculate the max number of rings
+int maxIntersectingEvents(EventTree root) {
+  var max = 0;
+  for (var child in root.children) {
+    var count = maxIntersectingEvents(child);
+    if (count > max) {
+      max = count;
+    }
+  }
+  return max + 1;
+}
+
 class EventsChartPainter extends CustomPainter {
+  final List<Event> events;
+  final Animation<double> animation;
+
+  const EventsChartPainter({required this.events, required this.animation})
+      : super(repaint: animation);
   @override
   void paint(Canvas canvas, Size size) {
     final center = Offset(size.width / 2, size.height / 2);
@@ -90,7 +141,7 @@ class EventsChartPainter extends CustomPainter {
     final clockRadius = 2 * maxRadius / 3;
     paintClock(canvas, center, clockRadius);
 
-    const maxRings = 3;
+    final maxRings = 3; //maxIntersectingEvents(buildEventTree(events));
     const ringGap = 2;
     final ringWidth = (maxRadius - clockRadius - ringGap * maxRings) / maxRings;
 

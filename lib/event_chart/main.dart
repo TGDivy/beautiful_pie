@@ -41,7 +41,8 @@ class EventsChartState extends State<EventsChart>
       }),
       onTapDown: (TapDownDetails details) {},
       child: CustomPaint(
-        painter: EventsChartPainter(),
+        painter:
+            EventsChartPainter(events: widget.events, animation: mainAnimation),
         // child: Center(
         //   child: Text(
         //     count.toString(),
