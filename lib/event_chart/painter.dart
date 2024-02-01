@@ -99,24 +99,75 @@ int maxIntersectingEventsAtSingleTime(List<Event> events) {
   return maxIntersectingEvents;
 }
 
+void PaintCurvedLabel(Canvas canvas, Offset center, String label, double angle,
+    double radius, double offset, TextStyle style) {
+  angle += startAngle;
+  // given the angle, find the x and y coordinates of the center of the label
+  // then iterate through the characters of the label and draw them one by one
+  // if top half, draw from the center to the right
+  // if bottom half, draw from the center to the left
+
+  final textPainter = TextPainter(
+    text: TextSpan(
+      text: label,
+      style: style,
+    ),
+    textDirection: TextDirection.ltr,
+  );
+  textPainter.layout();
+  final labelRadius = radius + offset;
+  final labelCenter = Offset(
+    center.dx + labelRadius * cos(angle),
+    center.dy + labelRadius * sin(angle),
+  );
+
+  final labelWidth = textPainter.width;
+  final labelHeight = textPainter.height;
+
+  final labelStart = Offset(
+    labelCenter.dx - labelWidth / 2,
+    labelCenter.dy - labelHeight / 2,
+  );
+
+  for (var i = 0; i < label.length; i++) {
+    final char = label[i];
+
+    //using angle, find the x and y coordinates of the center of the label
+    final charStart = Offset(
+      labelStart.dx + i * textPainter.width / label.length + i * 5,
+      labelStart.dy,
+    );
+
+    final charPainter = TextPainter(
+      text: TextSpan(
+        text: char,
+        style: style,
+      ),
+      textDirection: TextDirection.ltr,
+    );
+
+    charPainter.layout();
+    charPainter.paint(canvas, charStart);
+  }
+}
+
 void paintEvents(Canvas canvas, List<Event> events, Offset center,
     List<double> rings, double ringWidth) {
-  // paint the event on the next ring if it intersects with another event on the same ring
-  // otherwise paint it on the current ring
-
-  // sort the events by time
   events.sort((a, b) => a.time.compareTo(b.time));
-  List<Event> intersectingEvents = [];
+  Map<int, List<Event>> intersectingEvents = {};
   for (var event in events) {
-    intersectingEvents
-        .removeWhere((e) => e.time.add(e.duration).compareTo(event.time) <= 0);
+    // remove events that have already ended
+    intersectingEvents.removeWhere((key, value) =>
+        value[0].time.add(value[0].duration).compareTo(event.time) <= 0);
+
+    // find the first ring that doesn't intersect with any of the intersecting events
     var ringIndex = 0;
-    for (var i = 0; i < intersectingEvents.length; i++) {
-      if (intersectingEvents[i].time.compareTo(event.time) <= 0) {
-        ringIndex = i + 1;
+    for (var i = 0; i < rings.length; i++) {
+      if (!intersectingEvents.containsKey(i)) {
+        ringIndex = i;
+        break;
       }
     }
-    intersectingEvents.add(event);
 
     // get the angle and sweep angle
     final angle = event.time.hour * 2 * pi / 24;
@@ -125,6 +176,19 @@ void paintEvents(Canvas canvas, List<Event> events, Offset center,
     // paint the event
     paintRingSection(canvas, center, angle, sweepAngle, event.color,
         rings[ringIndex], ringWidth);
+
+    // paint the label
+    final labelRadius = rings[ringIndex];
+    const labelStyle = TextStyle(
+      color: Colors.black,
+      fontSize: 12,
+      fontWeight: FontWeight.bold,
+    );
+    PaintCurvedLabel(canvas, center, event.title, angle + sweepAngle / 2,
+        labelRadius, 0, labelStyle);
+
+    // add the event to the intersecting events
+    intersectingEvents[ringIndex] = [event];
   }
 }
 
