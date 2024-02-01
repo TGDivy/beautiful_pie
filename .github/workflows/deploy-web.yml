@@ -1,4 +1,4 @@
-name: Host on GitHub Pages
+name: Host Flutter Web App on GitHub Pages
 
 # Controls when the workflow will run
 on:
