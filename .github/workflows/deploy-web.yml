@@ -47,7 +47,7 @@ jobs:
         run: flutter test
 
       - name: Build Web App
-        run: flutter build web --base-href=/project_aj/
+        run: flutter build web --base-href=/beautiful_pie/
 
       - name: Deploy to GitHub Pages 🚀
         uses: JamesIves/github-pages-deploy-action@v4
