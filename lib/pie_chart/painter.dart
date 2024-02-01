@@ -1,6 +1,6 @@
 import 'dart:math';
 
-import 'package:beautiful_pie/events_chart/data.dart';
+import 'package:beautiful_pie/pie_chart/data.dart';
 import 'package:flutter/material.dart';
 
 void paintFilledCircle(Canvas canvas, Offset p, double r, Color c) {

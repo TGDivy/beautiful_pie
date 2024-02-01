@@ -1,14 +1,10 @@
-import 'dart:math';
-
-import 'package:beautiful_pie/events_chart/data.dart';
-import 'package:beautiful_pie/events_chart/painter.dart';
+import 'package:beautiful_pie/event_chart/data.dart';
+import 'package:beautiful_pie/event_chart/painter.dart';
 import 'package:flutter/material.dart';
 
-import 'utils.dart';
-
 class EventsChart extends StatefulWidget {
-  List<Event> data;
-  EventsChart({super.key, required this.data});
+  final List<Event> events;
+  const EventsChart({super.key, required this.events});
 
   @override
   EventsChartState createState() => EventsChartState();
@@ -45,25 +41,23 @@ class EventsChartState extends State<EventsChart>
       }),
       onTapDown: (TapDownDetails details) {},
       child: CustomPaint(
-          painter: PieChartPainter(data: _data, animation: _animation),
-          child: Center(
-            child: Text(
-              count.toString(),
-              style: const TextStyle(
-                fontSize: 28,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          )),
+        painter: EventsChartPainter(),
+        // child: Center(
+        //   child: Text(
+        //     count.toString(),
+        //     style: const TextStyle(
+        //       fontSize: 28,
+        //       fontWeight: FontWeight.bold,
+        //     ),
+        //   ),
+        // ),
+      ),
     );
   }
 
   @override
   void dispose() {
-    _controller.dispose();
-    for (var section in _data.sections) {
-      section.controller!.dispose();
-    }
+    mainController.dispose();
     super.dispose();
   }
 }

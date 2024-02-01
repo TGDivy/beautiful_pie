@@ -1,7 +1,7 @@
 import 'dart:math';
 
-import 'package:beautiful_pie/events_chart/data.dart';
-import 'package:beautiful_pie/events_chart/painter.dart';
+import 'package:beautiful_pie/pie_chart/painter.dart';
+import 'package:beautiful_pie/pie_chart/data.dart';
 import 'package:flutter/material.dart';
 
 import 'utils.dart';

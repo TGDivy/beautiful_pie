@@ -1,7 +1,7 @@
 import 'dart:math';
 
-import 'package:beautiful_pie/pie/data.dart';
-import 'package:beautiful_pie/pie/main.dart';
+import 'package:beautiful_pie/event_chart/data.dart';
+import 'package:beautiful_pie/event_chart/main.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -34,42 +34,10 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  final data = PieChartData(
-    gap: 5,
-    innerRadius: 30,
-    sections: [
-      PieSection(
-        value: 0.25,
-        color: Colors.blue,
-        label: 'Red',
-        offset: const Offset(0, 0),
-      ),
-      PieSection(
-        value: 0.25,
-        color: Colors.green,
-        label: 'Green',
-        offset: const Offset(0, 0),
-        selected: true,
-      ),
-      PieSection(
-        value: 0.5,
-        color: Colors.red,
-        label: 'Blue',
-        offset: const Offset(0, 0),
-      ),
-    ],
-  );
+  final List<Event> events = [];
 
   @override
   Widget build(BuildContext context) {
-    ColorScheme colorScheme = Theme.of(context).colorScheme;
-
-    // lerp the colors of data with colorScheme
-    final newData = data.copyWith(
-        sections: data.sections
-            .map((e) => e.copyWith(
-                color: Color.lerp(e.color, colorScheme.primary, 0.3)))
-            .toList());
     return Scaffold(
       appBar: AppBar(
           backgroundColor: Theme.of(context).colorScheme.surfaceVariant,
@@ -81,7 +49,7 @@ class _MyHomePageState extends State<MyHomePage> {
           dimension: min(MediaQuery.of(context).size.width,
                   MediaQuery.of(context).size.height) *
               0.8,
-          child: EventsChart(data: newData),
+          child: EventsChart(events: events),
         ),
       ),
       bottomNavigationBar: BottomNavigationBar(
